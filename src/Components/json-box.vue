@@ -64,6 +64,8 @@ export default {
       dataType = JsonArray;
     } else if (Object.prototype.toString.call(this.value) === "[object Date]") {
       dataType = JsonDate;
+    }else if (this.value.constructor === RegExp) {
+      dataType = JsonRegexp;
     } else if (typeof this.value === "object") {
       dataType = JsonObject;
     } else if (typeof this.value === "number") {
@@ -74,11 +76,6 @@ export default {
       dataType = JsonBoolean;
     } else if (typeof this.value === "function") {
       dataType = JsonFunction;
-    }
-    if (this.value.constructor === RegExp) {
-      // console.log("type", this.value.constructor === RegExp);
-      // this.value=this.value.toString()
-      dataType = JsonRegexp;
     }
     const complex =
       this.keyName &&

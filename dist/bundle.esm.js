@@ -554,6 +554,8 @@ var script$1 = {
             dataType = script$5;
         } else if (Object.prototype.toString.call(this.value) === '[object Date]') {
             dataType = script$3;
+        } else if (this.value.constructor === RegExp) {
+            dataType = script$2;
         } else if (_typeof(this.value) === 'object') {
             dataType = script$6;
         } else if (typeof this.value === 'number') {
@@ -564,9 +566,6 @@ var script$1 = {
             dataType = script$7;
         } else if (typeof this.value === 'function') {
             dataType = script$4;
-        }
-        if (this.value.constructor === RegExp) {
-            dataType = script$2;
         }
         var complex = this.keyName && this.value && (Array.isArray(this.value) || _typeof(this.value) === 'object' && Object.prototype.toString.call(this.value) !== '[object Date]');
         if (!this.previewMode && complex) {
