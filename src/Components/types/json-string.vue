@@ -8,6 +8,10 @@ export default {
     jsonValue: {
       type: String,
       required: true
+    },
+    showDoubleQuotes: {
+      type: Boolean,
+      default: true,
     }
   },
   data() {
@@ -51,7 +55,7 @@ export default {
         value = `<a href="${value}" target="_blank" class="jv-link">${value}</a>`;
         domItem.innerHTML=`"${value.toString()}"`
       } else {
-        domItem.innerText=`"${value.toString()}"`
+        domItem.innerText= this.showDoubleQuotes ? `"${value.toString()}"` : `${value.toString()}`
       }
     }
     

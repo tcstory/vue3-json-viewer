@@ -27,6 +27,10 @@ export default {
       default: 0,
     },
     previewMode: Boolean,
+    showDoubleQuotes: {
+      type: Boolean,
+      default: true,
+    }
   },
   data() {
     return {
@@ -120,6 +124,7 @@ export default {
         depth: this.depth,
         expand: this.expand,
         previewMode: this.previewMode,
+        showDoubleQuotes: this.showDoubleQuotes,
         "onUpdate:expand": (value) => {
           this.expand = value;
         },

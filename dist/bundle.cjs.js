@@ -4,14 +4,14 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var vue = require('vue');
 
-function _typeof(obj) {
+function _typeof(o) {
   "@babel/helpers - typeof";
 
-  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-  }, _typeof(obj);
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+    return typeof o;
+  } : function (o) {
+    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+  }, _typeof(o);
 }
 
 var REG_LINK$1 = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/;
@@ -21,6 +21,10 @@ var script$a = {
         jsonValue: {
             type: String,
             required: true
+        },
+        showDoubleQuotes: {
+            type: Boolean,
+            'default': true
         }
     },
     data: function data() {
@@ -61,7 +65,7 @@ var script$a = {
                 value = '<a href="'.concat(value, '" target="_blank" class="jv-link">').concat(value, '</a>');
                 domItem.innerHTML = '"'.concat(value.toString(), '"');
             } else {
-                domItem.innerText = '"'.concat(value.toString(), '"');
+                domItem.innerText = this.showDoubleQuotes ? '"'.concat(value.toString(), '"') : ''.concat(value.toString());
             }
         }
         return vue.h('span', {}, [
@@ -520,7 +524,11 @@ var script$1 = {
             type: Number,
             'default': 0
         },
-        previewMode: Boolean
+        previewMode: Boolean,
+        showDoubleQuotes: {
+            type: Boolean,
+            'default': true
+        }
     },
     data: function data() {
         return { expand: true };
@@ -591,6 +599,7 @@ var script$1 = {
             depth: this.depth,
             expand: this.expand,
             previewMode: this.previewMode,
+            showDoubleQuotes: this.showDoubleQuotes,
             'onUpdate:expand': function onUpdateExpand(value) {
                 _this.expand = value;
             }
@@ -661,15 +670,27 @@ var clipboard = {exports: {}};
                         fakeElement.value = value;
                         return fakeElement;
                     }
+                    var fakeCopyAction = function fakeCopyAction(value, options) {
+                        var fakeElement = createFakeElement(value);
+                        options.container.appendChild(fakeElement);
+                        var selectedText = select_default()(fakeElement);
+                        command('copy');
+                        fakeElement.remove();
+                        return selectedText;
+                    };
                     var ClipboardActionCopy = function ClipboardActionCopy(target) {
                         var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { container: document.body };
                         var selectedText = '';
                         if (typeof target === 'string') {
-                            var fakeElement = createFakeElement(target);
-                            options.container.appendChild(fakeElement);
-                            selectedText = select_default()(fakeElement);
-                            command('copy');
-                            fakeElement.remove();
+                            selectedText = fakeCopyAction(target, options);
+                        } else if (target instanceof HTMLInputElement && ![
+                                'text',
+                                'search',
+                                'url',
+                                'tel',
+                                'password'
+                            ].includes(target === null || target === void 0 ? void 0 : target.type)) {
+                            selectedText = fakeCopyAction(target.value, options);
                         } else {
                             selectedText = select_default()(target);
                             command('copy');
@@ -875,7 +896,6 @@ var clipboard = {exports: {}};
                                             if (trigger) {
                                                 trigger.focus();
                                             }
-                                            document.activeElement.blur();
                                             window.getSelection().removeAllRanges();
                                         }
                                     });
@@ -1249,6 +1269,10 @@ var script = {
         previewMode: {
             type: Boolean,
             'default': false
+        },
+        showDoubleQuotes: {
+            type: Boolean,
+            'default': true
         }
     },
     provide: function provide() {
@@ -1365,10 +1389,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         }, [vue.createVNode(_component_json_box, {
                 ref: 'jsonBox',
                 value: $props.value,
+                'show-double-quotes': $props.showDoubleQuotes,
                 sort: $props.sort,
                 'preview-mode': $props.previewMode
             }, null, 8, [
                 'value',
+                'show-double-quotes',
                 'sort',
                 'preview-mode'
             ])], 2),
